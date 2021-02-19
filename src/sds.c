@@ -331,12 +331,3 @@ sds sdsjoin(char **argv, int argc, char *sep) {
     return empty;
 }
 
-int main() {
-    char *strs[4];
-    strs[0] = "zzzj";
-    strs[1] = "1233";
-    strs[2] = "hello";
-    strs[3] = "world";
-
-    printf("%s", sdsjoin(strs, 4, "|"));
-}
