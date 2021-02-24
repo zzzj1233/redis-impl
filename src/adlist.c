@@ -298,7 +298,7 @@ void listRelease(list *list) {
 }
 
 void listRotate(list *list){
-    
+
 }
 
 

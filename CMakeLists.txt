@@ -4,4 +4,5 @@ project(redis-impl C)
 set(CMAKE_C_STANDARD 99)
 
 add_executable(sds src/sds.c)
+add_executable(dict src/dict.c src/sds.c src/sds.h)
 add_executable(adlist src/adlist.c src/sds.c src/sds.h)
