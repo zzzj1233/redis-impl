@@ -4,7 +4,7 @@
 
 #ifndef __DICT_H
 #define __DICT_H
-
+#define LOAD_FACTOR 0.7
 /*
  * 字典的操作状态
  */
@@ -262,6 +262,10 @@ int sdsCmp0(void *privdata, const void *key, const void *value) {
 
 void sdsFree(void *privdata, void *val) {
     sdsfree(val);
+}
+
+_Bool dictIsRehashing(dict *d) {
+    return d->rehashidx != -1;
 }
 
 struct dictType sdsDictType = {
