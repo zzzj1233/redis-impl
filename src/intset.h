@@ -50,8 +50,10 @@ int64_t intsetRandom(intset *is);
 
 uint8_t intsetGet(intset *is, uint32_t pos, int64_t *value);
 
+uint32_t intsetFindIndex(intset *is, int64_t value);
+
 uint32_t intsetLen(intset *is);
 
-size_t intsetBlobLen(intset *is);
+uint32_t intsetBlobLen(intset *is);
 
 #endif // __INTSET_H
