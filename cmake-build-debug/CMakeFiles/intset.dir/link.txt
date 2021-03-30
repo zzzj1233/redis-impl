@@ -1,3 +1,0 @@
-"H:\CodeIde\CLion 2020.1\bin\cmake\win\bin\cmake.exe" -E remove -f CMakeFiles\intset.dir/objects.a
-C:\MinGW\bin\ar.exe cr CMakeFiles\intset.dir/objects.a @CMakeFiles\intset.dir\objects1.rsp
-C:\MinGW\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\intset.dir/objects.a -Wl,--no-whole-archive  -o intset.exe -Wl,--out-implib,libintset.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\intset.dir\linklibs.rsp
