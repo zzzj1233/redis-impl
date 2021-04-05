@@ -127,9 +127,9 @@ typedef struct dictIterator {
     // safe ：标识这个迭代器是否安全
     int table, index, safe;
 
-    // entry ：当前迭代到的节点的指针
+    // zlentry ：当前迭代到的节点的指针
     // nextEntry ：当前迭代节点的下一个节点
-    //             因为在安全迭代器运作时， entry 所指向的节点可能会被修改，
+    //             因为在安全迭代器运作时， zlentry 所指向的节点可能会被修改，
     //             所以需要一个额外的指针来保存下一节点的位置，
     //             从而防止指针丢失
     dictEntry *entry, *nextEntry;

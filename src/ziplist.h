@@ -20,6 +20,21 @@
 #define ZIP_INT_24B (0xc0 | 3<<4)
 #define ZIP_INT_8B 0xfe
 
+typedef struct zlentry {
+    unsigned int previousLen;
+    // 1 | 5
+    unsigned int previousSize;
+
+    unsigned char encoding;
+
+    // encodingLen
+    unsigned int len;
+
+    unsigned int lenSize;
+
+    unsigned char *p;
+};
+
 unsigned char *ziplistNew(void);
 
 unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int slen, int where);
