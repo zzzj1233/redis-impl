@@ -1,0 +1,3 @@
+"D:\CodeIde\CLion 2020.3\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\sds.dir/objects.a
+D:\devTools\mingw64\bin\ar.exe cr CMakeFiles\sds.dir/objects.a @CMakeFiles\sds.dir\objects1.rsp
+D:\devTools\mingw64\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\sds.dir/objects.a -Wl,--no-whole-archive  -o sds.exe -Wl,--out-implib,libsds.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\sds.dir\linklibs.rsp

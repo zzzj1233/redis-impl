@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="redis-impl" targetName="ziplist" />
+      <config projectName="redis-impl" targetName="intset" />
+      <config projectName="redis-impl" targetName="sds" />
+      <config projectName="redis-impl" targetName="dict" />
+      <config projectName="redis-impl" targetName="adlist" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b5b05a1c-c78e-42bc-8066-9b6ac43e7dcd" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/config.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endianconv.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/endianconv.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/sds.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/sds.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ziplist.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/ziplist.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ziplist.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ziplist.h" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="clangTidyViaClangd" value="false" />
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
+  <component name="ProjectId" id="1ogKKu9aDelYCquyTuQBgjKhQq8" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="android.sdk.path" value="D:/android-sdk-windows" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path" value="node" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Problems" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.19124088" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\zzzj\CLionProjects\redis-impl\src" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake Application.ziplist">
+    <configuration name="adlist" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="adlist" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="adlist">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="dict" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="dict" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="dict">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="intset" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="intset" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="intset">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="sds" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="sds" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="sds">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="ziplist" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="ziplist" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="ziplist">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake Application.adlist" />
+      <item itemvalue="CMake Application.dict" />
+      <item itemvalue="CMake Application.intset" />
+      <item itemvalue="CMake Application.sds" />
+      <item itemvalue="CMake Application.ziplist" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b5b05a1c-c78e-42bc-8066-9b6ac43e7dcd" name="Default Changelist" comment="" />
+      <created>1613702733072</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1613702733072</updated>
+      <workItem from="1613702734624" duration="3752000" />
+      <workItem from="1613707341600" duration="13374000" />
+      <workItem from="1613727854358" duration="722000" />
+      <workItem from="1613728664228" duration="187000" />
+      <workItem from="1613800950019" duration="6533000" />
+      <workItem from="1613815644305" duration="508000" />
+      <workItem from="1613816165282" duration="13000" />
+      <workItem from="1613816191411" duration="1170000" />
+      <workItem from="1614070444850" duration="2537000" />
+      <workItem from="1614150259420" duration="11903000" />
+      <workItem from="1614217696372" duration="14245000" />
+      <workItem from="1614243850898" duration="5432000" />
+      <workItem from="1614587525279" duration="12000" />
+      <workItem from="1614675792959" duration="962000" />
+      <workItem from="1617094348587" duration="6010000" />
+      <workItem from="1617155235484" duration="1217000" />
+      <workItem from="1617673380333" duration="2186000" />
+      <workItem from="1617675598865" duration="5596000" />
+      <workItem from="1617694600553" duration="4915000" />
+      <workItem from="1617700140351" duration="2817000" />
+      <workItem from="1617702995313" duration="313000" />
+    </task>
+    <task id="LOCAL-00001" summary="完善sds">
+      <created>1613719655341</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1613719655341</updated>
+    </task>
+    <task id="LOCAL-00002" summary="adlist">
+      <created>1613728673168</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1613728673168</updated>
+    </task>
+    <task id="LOCAL-00003" summary="完善链表">
+      <created>1613816436666</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1613816436666</updated>
+    </task>
+    <task id="LOCAL-00004" summary="开始编写dict">
+      <created>1614161809552</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1614161809552</updated>
+    </task>
+    <task id="LOCAL-00005" summary="完善渐进式rehash">
+      <created>1614237094944</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1614237094944</updated>
+    </task>
+    <task id="LOCAL-00006" summary="初始化intset">
+      <created>1614248135123</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1614248135123</updated>
+    </task>
+    <task id="LOCAL-00007" summary="更新intset">
+      <created>1617100947856</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1617100947856</updated>
+    </task>
+    <task id="LOCAL-00008" summary="完成intset">
+      <created>1617673414422</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1617673414422</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="完善sds" />
+    <MESSAGE value="adlist" />
+    <MESSAGE value="完善链表" />
+    <MESSAGE value="开始编写dict" />
+    <MESSAGE value="完善渐进式rehash" />
+    <MESSAGE value="初始化intset" />
+    <MESSAGE value="更新intset" />
+    <MESSAGE value="完成intset" />
+    <option name="LAST_COMMIT_MESSAGE" value="完成intset" />
+  </component>
+</project>

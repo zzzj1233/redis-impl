@@ -1,4 +1,5 @@
 #include <stddef.h>
+#include "endianconv.h"
 
 #define ZIPLIST_HEAD 0
 #define ZIPLIST_TAIL 1
@@ -14,11 +15,22 @@
 #define ZIP_INT_IMM_MAX 0xfd    /* 11111101 */
 #define ZIP_INT_IMM_VAL(v) (v & ZIP_INT_IMM_MASK)
 
+// 11000000
 #define ZIP_INT_16B (0xc0 | 0<<4)
+// 11010000
 #define ZIP_INT_32B (0xc0 | 1<<4)
+// 11100000
 #define ZIP_INT_64B (0xc0 | 2<<4)
+// 11110000
 #define ZIP_INT_24B (0xc0 | 3<<4)
+// 11111110
 #define ZIP_INT_8B 0xfe
+
+/*
+ * 24 位整数的最大值和最小值
+ */
+#define INT24_MAX 0x7fffff
+#define INT24_MIN (-INT24_MAX - 1)
 
 typedef struct zlentry {
     unsigned int previousLen;
@@ -27,10 +39,9 @@ typedef struct zlentry {
 
     unsigned char encoding;
 
-    // encodingLen
-    unsigned int len;
+    unsigned int encodingLen;
 
-    unsigned int lenSize;
+    unsigned int contentLen;
 
     unsigned char *p;
 };

@@ -1,0 +1,7 @@
+C:/Users/zzzj/CLionProjects/redis-impl/cmake-build-debug/CMakeFiles/sds.dir
+C:/Users/zzzj/CLionProjects/redis-impl/cmake-build-debug/CMakeFiles/dict.dir
+C:/Users/zzzj/CLionProjects/redis-impl/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/zzzj/CLionProjects/redis-impl/cmake-build-debug/CMakeFiles/adlist.dir
+C:/Users/zzzj/CLionProjects/redis-impl/cmake-build-debug/CMakeFiles/intset.dir
+C:/Users/zzzj/CLionProjects/redis-impl/cmake-build-debug/CMakeFiles/ziplist.dir
+C:/Users/zzzj/CLionProjects/redis-impl/cmake-build-debug/CMakeFiles/rebuild_cache.dir

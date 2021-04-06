@@ -101,7 +101,7 @@ sds sdscatsds(sds s, const sds t) {
     return sdscatlen(s, &t, sdslen(t));
 }
 
-// 将字符串 t 的前 len 个字符复制到 sds s 当中，
+// 将字符串 t 的前 encodingLen 个字符复制到 sds s 当中，
 sds sdscpylen(sds s, const char *t, size_t len) {
     struct sdshdr *sh = (struct sdshdr *) (s - sizeof(struct sdshdr));
     if (sh->len + sh->free > len) {
