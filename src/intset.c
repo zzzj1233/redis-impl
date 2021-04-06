@@ -2,6 +2,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include "time.h"
 
 void printIsContent(intset *is) {
     if (is->encoding == INTSET_ENC_INT16) {
@@ -145,6 +146,15 @@ uint8_t intsetSearch(intset *is, int64_t value, int *pos) {
     return 0;
 }
 
+uint32_t intsetLen(intset *is) {
+    return is->length;
+}
+
+// 返回intset总占的字节大小
+uint32_t intsetBlobLen(intset *is) {
+    return sizeof(struct intset) + is->length * is->encoding;
+}
+
 uint8_t intsetFind(intset *is, int64_t value) {
     int pos;
 
@@ -153,6 +163,11 @@ uint8_t intsetFind(intset *is, int64_t value) {
     }
 
     return 0;
+}
+
+int64_t intsetRandom(intset *is) {
+    srand((unsigned) time(NULL));
+    return intsetGetVal(is, rand() % is->length, is->encoding);
 }
 
 void move(intset *is, int pos) {
@@ -245,6 +260,9 @@ intset *intsetRemove(intset *is, int64_t value, int *success) {
     // 缩小intset
     is->length--;
     is = realloc(is, sizeof(struct intset) + is->length * is->encoding);
+    if (success != NULL) {
+        *success = 1;
+    }
     return is;
 }
 
@@ -264,6 +282,8 @@ int main() {
     is = intsetAdd(is, 9999999999999, &success);
     is = intsetAdd(is, 3, &success);
     is = intsetRemove(is, 17, &success);
+    is = intsetRemove(is, 5, &success);
+    is = intsetRemove(is, 13, &success);
 
     printIsContent(is);
 
