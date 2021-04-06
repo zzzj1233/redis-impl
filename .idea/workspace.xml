@@ -75,27 +75,27 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake Application.ziplist">
-    <configuration name="adlist" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="adlist" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="adlist">
+    <configuration name="adlist" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="adlist" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="adlist">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="dict" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="dict" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="dict">
+    <configuration name="dict" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="dict" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="dict">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="intset" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="intset" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="intset">
+    <configuration name="intset" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="intset" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="intset">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="sds" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="sds" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="sds">
+    <configuration name="sds" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="sds" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="sds">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
-    <configuration name="ziplist" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="ziplist" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="ziplist">
+    <configuration name="ziplist" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="redis-impl" TARGET_NAME="ziplist" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="redis-impl" RUN_TARGET_NAME="ziplist">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
