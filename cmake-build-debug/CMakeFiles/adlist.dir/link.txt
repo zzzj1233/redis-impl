@@ -1,3 +1,0 @@
-"D:\CodeIde\CLion 2020.3\bin\cmake\win\bin\cmake.exe" -E rm -f CMakeFiles\adlist.dir/objects.a
-D:\devTools\mingw64\bin\ar.exe cr CMakeFiles\adlist.dir/objects.a @CMakeFiles\adlist.dir\objects1.rsp
-D:\devTools\mingw64\bin\gcc.exe -g   -Wl,--whole-archive CMakeFiles\adlist.dir/objects.a -Wl,--no-whole-archive  -o adlist.exe -Wl,--out-implib,libadlist.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\adlist.dir\linklibs.rsp
