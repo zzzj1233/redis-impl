@@ -52,15 +52,6 @@ unsigned char *zipEncoding(unsigned char *zl, unsigned int slen, uint8_t *encodi
     return buf;
 }
 
-void printEntryPtr(unsigned char *p) {
-    struct zlentry *entry = zipEntry(p);
-    printEntry(entry);
-    free(entry);
-}
-
-void printEntry(struct zlentry *entry) {
-    printf("previousSize = %d , encodingLen = %d , contentLen = %d \n", entry->previousSize, entry->encodingLen, entry->contentLen);
-}
 
 unsigned char *ziplistNew(void) {
     unsigned int bytes = ZIPLIST_HEADER_SIZE + 1;
@@ -251,6 +242,7 @@ struct zlentry *zipEntry(unsigned char *zl) {
     entry->fullEncoding = malloc(entry->encodingLen);
     memcpy(entry->fullEncoding, zl + len, entry->encodingLen);
     entry->p = zl;
+    entry->totalSize = entry->previousLen + entry->encodingLen + entry->contentLen;
 
     return entry;
 }
@@ -334,6 +326,7 @@ unsigned char *ziplistIndex(unsigned char *zl, int index) {
     while (*zl != ZIP_END) {
         struct zlentry *entry = zipEntry(zl);
         if (idx == index) {
+            printf("p1 = %p \n", entry->p);
             return entry->p;
         }
         idx++;
@@ -424,12 +417,68 @@ unsigned char *ziplistPrev(unsigned char *zl, unsigned char *p) {
 
 unsigned char *ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char *s, unsigned int slen) {
     if (p == NULL) {
-        ziplistPush(zl, s, slen, ZIPLIST_TAIL);
+        return ziplistPush(zl, s, slen, ZIPLIST_TAIL);
     }
 
+    printf("p2 = %p\n", p);
+
+    struct zlentry *current = zipEntry(p);
+
+    struct zlentry *next = zipEntry(ziplistNext(zl, p));
+
+    if (next == NULL) {
+        return ziplistPush(zl, s, slen, ZIPLIST_TAIL);
+    }
+
+    unsigned int previousLen = current->encodingLen;
+    unsigned int previousSize = current->totalSize;
+
+    unsigned char *startPtr = p + previousSize;
+
+    long long numberValue = 0;
+    unsigned char *encoding = NULL;
+    uint8_t encodingLen = 0;
+
+    if (zipTryEncoding(s, slen, &numberValue, &encoding)) {
+        encodingLen = 1;
+        slen = zipIntSize(*encoding);
+    } else {
+        // 3.2 encodingLen作为输出参数传入
+        encoding = zipEncoding(startPtr, slen, &encodingLen);
+    }
+
+    unsigned int bytes = previousLen + encodingLen + slen;
+
+    // 23 0 0 0 16 0 0 0 2 0 0 4 122 122 122 106 6 4 104 97 104 97 255
+    // 28 0 0 0 16 0 0 0 2 0 0 4 122 122 122 106 6 4 104 97 104 97 255 116 64 34 190 0
+
+    // 1. 申请空间
+    unsigned int newSize = ZIPLIST_BYTES(zl) + bytes + 1;
+    *p = 123;
+    zl = realloc(zl, newSize);
+    ZIPLIST_BYTES(zl) = newSize;
+    printZl(zl);
+    // memmove(startPtr + bytes, startPtr, next->totalSize + 1);
+    printZl(zl);
+
+    // 2. 在当前元素的后面插入
+
+    // 3. 需要更新当前元素的下一个元素的previousSize和previousLen,可能触发级联更新
+
+    return NULL;
 }
 
-int main() {
+void printEntry(struct zlentry *entry) {
+    printf("previousSize = %d , encodingLen = %d , contentLen = %d \n", entry->previousSize, entry->encodingLen, entry->contentLen);
+}
+
+void printEntryPtr(unsigned char *p) {
+    struct zlentry *entry = zipEntry(p);
+    printEntry(entry);
+    free(entry);
+}
+
+void test1() {
     // 1. push
     // 11 0 0 0 10 0 0 0 0 0 255
     unsigned char *zl = ziplistNew();
@@ -469,4 +518,15 @@ int main() {
     printEntryPtr(previous);
     unsigned char *previousPrev = ziplistPrev(zl, previous);
     printEntryPtr(previousPrev);
+}
+
+void testInsert() {
+    unsigned char *zl = ziplistNew();
+    zl = ziplistPush(zl, "zzzj", 4, 0);
+    zl = ziplistPush(zl, "biha", 4, 0);
+    zl = ziplistInsert(zl, ziplistIndex(zl, 0), "1233", 4);
+}
+
+int main() {
+    testInsert();
 }

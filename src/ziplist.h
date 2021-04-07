@@ -39,11 +39,15 @@ typedef struct zlentry {
 
     unsigned char encoding;
 
+    unsigned char *fullEncoding;
+
     unsigned int encodingLen;
 
     unsigned int contentLen;
 
     unsigned char *p;
+
+    unsigned int totalSize;
 };
 
 unsigned char *ziplistNew(void);

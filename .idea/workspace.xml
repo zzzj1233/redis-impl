@@ -3,23 +3,20 @@
   <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
     <generated>
       <config projectName="redis-impl" targetName="ziplist" />
-      <config projectName="redis-impl" targetName="intset" />
-      <config projectName="redis-impl" targetName="sds" />
       <config projectName="redis-impl" targetName="dict" />
       <config projectName="redis-impl" targetName="adlist" />
+      <config projectName="redis-impl" targetName="intset" />
+      <config projectName="redis-impl" targetName="sds" />
     </generated>
   </component>
   <component name="CMakeSettings" AUTO_RELOAD="true">
     <configurations>
-      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" ENABLED="true" />
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b5b05a1c-c78e-42bc-8066-9b6ac43e7dcd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/config.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/endianconv.c" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/endianconv.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sds.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/sds.c" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ziplist.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/ziplist.c" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ziplist.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/ziplist.h" afterDir="false" />
     </list>
@@ -108,7 +105,10 @@
       <item itemvalue="CMake Application.ziplist" />
     </list>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SpellCheckerSettings" BundledDictionaries="0" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" Dictionaries="0" CorrectionsLimit="5" DefaultDictionary="application-level" UseSingleDictionary="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="b5b05a1c-c78e-42bc-8066-9b6ac43e7dcd" name="Default Changelist" comment="" />
@@ -137,6 +137,7 @@
       <workItem from="1617694600553" duration="4915000" />
       <workItem from="1617700140351" duration="2817000" />
       <workItem from="1617702995313" duration="313000" />
+      <workItem from="1617803023687" duration="5821000" />
     </task>
     <task id="LOCAL-00001" summary="完善sds">
       <created>1613719655341</created>
@@ -198,7 +199,7 @@
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
+    <option name="version" value="2" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="完善sds" />
@@ -210,5 +211,39 @@
     <MESSAGE value="更新intset" />
     <MESSAGE value="完成intset" />
     <option name="LAST_COMMIT_MESSAGE" value="完成intset" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state width="2517" height="274" key="GridCell.Tab.0.bottom" timestamp="1617809190430">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="2517" height="274" key="GridCell.Tab.0.bottom/0.0.2560.1040@0.0.2560.1040" timestamp="1617809190430" />
+    <state width="2517" height="274" key="GridCell.Tab.0.center" timestamp="1617809190430">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="2517" height="274" key="GridCell.Tab.0.center/0.0.2560.1040@0.0.2560.1040" timestamp="1617809190430" />
+    <state width="2517" height="274" key="GridCell.Tab.0.left" timestamp="1617809190429">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="2517" height="274" key="GridCell.Tab.0.left/0.0.2560.1040@0.0.2560.1040" timestamp="1617809190429" />
+    <state width="2517" height="274" key="GridCell.Tab.0.right" timestamp="1617809190430">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="2517" height="274" key="GridCell.Tab.0.right/0.0.2560.1040@0.0.2560.1040" timestamp="1617809190430" />
+    <state width="2517" height="338" key="GridCell.Tab.1.bottom" timestamp="1617807711055">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="2517" height="338" key="GridCell.Tab.1.bottom/0.0.2560.1040@0.0.2560.1040" timestamp="1617807711055" />
+    <state width="2517" height="338" key="GridCell.Tab.1.center" timestamp="1617807711055">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="2517" height="338" key="GridCell.Tab.1.center/0.0.2560.1040@0.0.2560.1040" timestamp="1617807711055" />
+    <state width="2517" height="338" key="GridCell.Tab.1.left" timestamp="1617807711055">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="2517" height="338" key="GridCell.Tab.1.left/0.0.2560.1040@0.0.2560.1040" timestamp="1617807711055" />
+    <state width="2517" height="338" key="GridCell.Tab.1.right" timestamp="1617807711055">
+      <screen x="0" y="0" width="2560" height="1040" />
+    </state>
+    <state width="2517" height="338" key="GridCell.Tab.1.right/0.0.2560.1040@0.0.2560.1040" timestamp="1617807711055" />
   </component>
 </project>
