@@ -32,6 +32,8 @@
 #define INT24_MAX 0x7fffff
 #define INT24_MIN (-INT24_MAX - 1)
 
+#define ZIP_BIGLEN 254
+
 typedef struct zlentry {
     unsigned int previousLen;
     // 1 | 5

@@ -5,13 +5,16 @@
 #include <stdint.h>
 #include "util.h"
 
-void printZl(unsigned char *zl) {
-    for (int i = 0; i < ZIPLIST_BYTES(zl); ++i) {
-        printf("%d ", *(zl + i));
+void zipSetPrevious(unsigned char *p, unsigned int previousSize, unsigned int previousLen) {
+    if (previousLen == 1) {
+        *p = previousSize;
+    } else {
+        memset(p + 1, 0x00, 4);
+        *p = ZIP_BIGLEN;
+        // assert previousLen == 5
+        memcpy(p + 1, &previousSize, 4);
     }
-    printf("\n");
 }
-
 
 // 对字节数组进行编码,返回encoding的长度
 // encoding将被追加到content的后面
@@ -43,15 +46,14 @@ unsigned char *zipEncoding(unsigned char *zl, unsigned int slen, uint8_t *encodi
             return NULL;
         }
         buf[0] = 0b10000000;
-        buf[1] = (slen << 24) & 0xff;
-        buf[2] = (slen << 16) & 0xff;
-        buf[3] = (slen << 8) & 0xff;
+        buf[1] = (slen >> 24) & 0xff;
+        buf[2] = (slen >> 16) & 0xff;
+        buf[3] = (slen >> 8) & 0xff;
         buf[4] = slen & 0xff;
     }
 
     return buf;
 }
-
 
 unsigned char *ziplistNew(void) {
     unsigned int bytes = ZIPLIST_HEADER_SIZE + 1;
@@ -186,11 +188,11 @@ static uint64_t zipLoadInt(unsigned char *ptr, unsigned char encoding) {
 
 // return size
 static unsigned int decodePreviousLen(unsigned char *zl, unsigned int *previousSize) {
-    if (zl[0] < 254) {
+    if (zl[0] < ZIP_BIGLEN) {
         *previousSize = zl[0];
         return 1;
     } else {
-        memcpy(previousSize, zl, 5);
+        memcpy(previousSize, zl + 1, 4);
         return 5;
     }
 }
@@ -202,8 +204,8 @@ static unsigned int zipStrSize(unsigned char *zl, unsigned int *encodingLen) {
         *encodingLen = 1;
         return encoding0;
     } else if ((encoding0 >> 6) == 0b01) {
-        unsigned char encoding1 = zl[1];
         *encodingLen = 2;
+        unsigned char encoding1 = zl[1];
         return ((encoding0 & 0b00111111) << 8) | encoding1;
         // (encoding0 >> 6) == 0b10
     } else {
@@ -247,6 +249,34 @@ struct zlentry *zipEntry(unsigned char *zl) {
     return entry;
 }
 
+void printZl(unsigned char *zl) {
+    unsigned int offset = ZIPLIST_HEADER_SIZE;
+
+    int skip = -1;
+    int skipLength = 0;
+
+    for (int i = 0; i < ZIPLIST_BYTES(zl); ++i) {
+        if (i == offset) {
+            printf("] ");
+            struct zlentry *entry = zipEntry(zl + offset);
+            printf(" [ ");
+            offset += entry->totalSize;
+            if (entry->totalSize > 20) {
+                // 跳过 entry->totalSize - 15个元素
+                skip = i + 14;
+                skipLength = entry->totalSize - 14;
+            }
+        } else if (i == skip) {
+            i += skipLength - 1;
+            skip = -1;
+            printf("...");
+        }
+        printf("%d ", *(zl + i));
+    }
+
+    printf("\n");
+}
+
 unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int slen, int where) {
     // 1. 当前节点是否是最后一个节点?
     unsigned char *startPtr = zl + ZIPLIST_TAIL_OFFSET(zl);
@@ -259,7 +289,7 @@ unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int sle
     struct zlentry *previousEntry = NULL;
     if (!isLastNode) {
         previousEntry = zipEntry(startPtr);
-        previousLen = previousEntry->totalSize < 254 ? 1 : 5;
+        previousLen = previousEntry->totalSize < ZIP_BIGLEN ? 1 : 5;
         previousSize = previousEntry->previousLen + previousEntry->encodingLen + previousEntry->contentLen;
     } else {
         previousLen = 1;
@@ -293,7 +323,7 @@ unsigned char *ziplistPush(unsigned char *zl, unsigned char *s, unsigned int sle
     startPtr = zl + ZIPLIST_TAIL_OFFSET(zl) + (isLastNode ? 0 : previousSize);
 
     // 5. 赋值
-    memcpy(startPtr, &previousSize, previousLen);
+    zipSetPrevious(startPtr, previousSize, previousLen);
     startPtr += previousLen;
 
     memcpy(startPtr, encoding, encodingLen);
@@ -326,7 +356,6 @@ unsigned char *ziplistIndex(unsigned char *zl, int index) {
     while (*zl != ZIP_END) {
         struct zlentry *entry = zipEntry(zl);
         if (idx == index) {
-            printf("p1 = %p \n", entry->p);
             return entry->p;
         }
         idx++;
@@ -415,35 +444,51 @@ unsigned char *ziplistPrev(unsigned char *zl, unsigned char *p) {
     return p - current->previousSize;
 }
 
-unsigned char *cascadeUpdate(unsigned char *zl, struct zlentry *entry) {
+unsigned char *cascadeUpdate(unsigned char *zl, unsigned char *p) {
+    if (p == NULL || *p == ZIP_END) {
+        return zl;
+    }
+
+    struct zlentry *entry = zipEntry(p);
+
     if (*(entry->p + entry->totalSize) == ZIP_END) {
         return zl;
     }
+
     unsigned char *nextP = entry->p + entry->totalSize;
 
     struct zlentry *nextEntry = zipEntry(nextP);
 
-    uint8_t previousLen = entry->totalSize < 254 ? 1 : 5;
+    uint8_t previousLen = entry->totalSize < ZIP_BIGLEN ? 1 : 5;
 
     if (nextEntry->previousLen == previousLen) {
-        return zl;
+        // 更新nextEntry的previousSize
+        zipSetPrevious(nextEntry->p, entry->totalSize, previousLen);
+        return cascadeUpdate(zl, ziplistNext(zl, p));
     }
 
     unsigned int offset = nextEntry->p - zl;
 
-    // 1. 缩小的情况不做处理,浪费4个字节也无妨
-    if (nextEntry->previousLen == 1) {
-        return zl;
+    // 1. 缩小的情况不做处理,浪费3个字节也无妨
+    if (previousLen == 1) {
+        zipSetPrevious(p, entry->totalSize, 5);
+        return cascadeUpdate(zl, ziplistNext(zl, p));
     } else {
-        zl = realloc(zl, ZIPLIST_BYTES(zl) - 4);
+        zl = realloc(zl, ZIPLIST_BYTES(zl) + 4);
     }
+    // 23 0 0 0 16 0 0 0 2 0 [0 4 122 122 122 106] [6 4 98 105 104 97] 255
 
+    // 2. 挪动元素
+    // startPtr = nextEntry.p
     unsigned char *startPtr = zl + offset;
 
-    // assert nextEntry->previousLen == 5
-    memcpy(startPtr, &entry->totalSize, nextEntry->previousLen);
+    // 35 0 0 0 29 0 0 0 4 0 [0 4 122 122 122 106] [6 7 104 97 104 97 104 97 104] [9 192 209 4] [4 208 197 225 240] 255
+    memmove(startPtr + 5, startPtr + 1, nextEntry->encodingLen + nextEntry->contentLen);
 
-    return cascadeUpdate(zl, zipEntry(startPtr));
+    // 重新复制previousSize
+    zipSetPrevious(startPtr, entry->totalSize, 5);
+
+    return cascadeUpdate(zl, startPtr + nextEntry->totalSize);
 }
 
 unsigned char *ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char *s, unsigned int slen) {
@@ -451,18 +496,22 @@ unsigned char *ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char 
         return ziplistPush(zl, s, slen, ZIPLIST_TAIL);
     }
 
-    printf("p2 = %p\n", p);
-
     struct zlentry *current = zipEntry(p);
 
-    struct zlentry *next = zipEntry(ziplistNext(zl, p));
+    unsigned char *nextPtr = ziplistNext(zl, p);
+
+    if (nextPtr == NULL) {
+        return ziplistPush(zl, s, slen, ZIPLIST_TAIL);
+    }
+
+    struct zlentry *next = zipEntry(nextPtr);
 
     if (next == NULL) {
         return ziplistPush(zl, s, slen, ZIPLIST_TAIL);
     }
 
     unsigned int previousSize = current->totalSize;
-    unsigned int previousLen = previousSize < 254 ? 1 : 5;
+    unsigned int previousLen = previousSize < ZIP_BIGLEN ? 1 : 5;
 
     unsigned char *startPtr = p + previousSize;
 
@@ -483,33 +532,34 @@ unsigned char *ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char 
     // 1. 申请空间
     unsigned int offset = startPtr - zl;
     unsigned int newSize = ZIPLIST_BYTES(zl) + bytes;
-    printZl(zl);
+
+    ZIPLIST_BYTES(zl) = newSize;
+    ZIPLIST_LENGTH(zl) = ZIPLIST_LENGTH(zl) + 1;
+
     zl = realloc(zl, newSize);
+
     startPtr = zl + offset;
-    // 28 0 0 0 16 0 0 0 2 0 0 4 122 122 122 106 6 4 98 105 104 97 255 116 0 0 0 0
-    // 28 0 0 0 16 0 0 0 2 0 0 4 122 122 122 106 6 4 98 105 6 4 98 105 104 97 255 0
+
     memmove(startPtr + bytes, startPtr, next->totalSize + 1);
+
     // 2. 在当前元素的后面插入
-    memcpy(startPtr, encoding, encodingLen);
-    memcpy(startPtr + encodingLen, &previousSize, previousLen);
+    zipSetPrevious(startPtr, previousSize, previousLen);
+
+    memcpy(startPtr + previousLen, encoding, encodingLen);
+
     if (numberValue) {
         memcpy(startPtr + encodingLen + previousLen, &numberValue, slen);
     } else {
         memcpy(startPtr + encodingLen + previousLen, &s, slen);
     }
-    // 23 0 0 0 16 0 0 0 2 0 [0 4 122 122 122 106] [6 4 98 105 104 97] 255
-    // 27 0 0 0 16 0 0 0 2 0 [0 4 122 122 122 106] [192 6 209 4] [6 4 98 105 104 97 255]
 
-    // 3. 更新属性
-    ZIPLIST_BYTES(zl) = newSize;
-    ZIPLIST_LENGTH(zl) = ZIPLIST_LENGTH(zl) + 1;
+    // 4. 级联更新
+    zl = cascadeUpdate(zl, startPtr + bytes);
 
-    cascadeUpdate(zl, NULL);
     // 5. 更新tailOffset
 
-    return NULL;
+    return zl;
 }
-
 
 void printEntry(struct zlentry *entry) {
     printf("previousSize = %d , encodingLen = %d , contentLen = %d \n", entry->previousSize, entry->encodingLen, entry->contentLen);
@@ -565,9 +615,25 @@ void test1() {
 
 void testInsert() {
     unsigned char *zl = ziplistNew();
+    // 17 0 0 0 10 0 0 0 1 0 [0 4 122 122 122 106] 255
     zl = ziplistPush(zl, "zzzj", 4, 0);
+
+    // 23 0 0 0 16 0 0 0 2 0 [0 4 122 122 122 106] [6 4 98 105 104 97] 255
     zl = ziplistPush(zl, "biha", 4, 0);
-    zl = ziplistInsert(zl, ziplistIndex(zl, 0), "1233", 4);
+
+    // 26 1 0 0 22 0 0 0 3 0 [0 4 122 122 122 106] [6 4 98 105 104 97] [(6 65 0) ...] 255
+    zl = ziplistPush(zl, "big data", 256, 0);
+
+    zl = ziplistPush(zl, "heihei", 6, 0);
+
+    printZl(zl);
+
+    // 27 0 0 0 16 0 0 0 2 0 [0 4 122 122 122 106] [6 192 209 4] [6 4 98 105 104 97] 255
+    // 级联更新后
+    // 27 0 0 0 16 0 0 0 3 0 [0 4 122 122 122 106] [6 192 209 4] [4 4 98 105 104 97] 255
+    zl = ziplistInsert(zl, ziplistIndex(zl, 2), "1233", 4);
+
+    printZl(zl);
 }
 
 int main() {
