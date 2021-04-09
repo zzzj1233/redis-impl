@@ -471,7 +471,7 @@ unsigned char *cascadeUpdate(unsigned char *zl, unsigned char *p) {
 
     // 1. 缩小的情况不做处理,浪费3个字节也无妨
     if (previousLen == 1) {
-        zipSetPrevious(p, entry->totalSize, 5);
+        zipSetPrevious(nextEntry->p, entry->totalSize, 5);
         return cascadeUpdate(zl, ziplistNext(zl, p));
     } else {
         zl = realloc(zl, ZIPLIST_BYTES(zl) + 4);
@@ -553,16 +553,23 @@ unsigned char *ziplistInsert(unsigned char *zl, unsigned char *p, unsigned char 
         memcpy(startPtr + encodingLen + previousLen, &s, slen);
     }
 
+
     // 4. 级联更新
-    zl = cascadeUpdate(zl, startPtr + bytes);
+    zl = cascadeUpdate(zl, startPtr);
 
     // 5. 更新tailOffset
 
     return zl;
 }
 
+void entryRepr(unsigned char *zl, struct zlentry *entry) {
+    printf("offset = %d , previousLen = %d , previousSize = %d , encodingLen = %d , contentLen = %d , totalSize = %d", entry->p - zl, entry->previousLen, entry->previousSize,
+           entry->encodingLen, entry->contentLen, entry->totalSize);
+}
+
 void printEntry(struct zlentry *entry) {
-    printf("previousSize = %d , encodingLen = %d , contentLen = %d \n", entry->previousSize, entry->encodingLen, entry->contentLen);
+    printf("previousLen = %d ,  previousSize = %d , encodingLen = %d , contentLen = %d , totalSize = %d \n", entry->previousLen, entry->previousSize, entry->encodingLen,
+           entry->contentLen, entry->totalSize);
 }
 
 void printEntryPtr(unsigned char *p) {
@@ -613,6 +620,69 @@ void test1() {
     printEntryPtr(previousPrev);
 }
 
+void ziplistRepr(unsigned char *zl) {
+    unsigned char *ptr = zl + ZIPLIST_HEADER_SIZE;
+    for (int i = 0; i < ZIPLIST_LENGTH(zl); ++i) {
+        struct zlentry *entry = zipEntry(ptr);
+        printf("index = %d , ", i);
+        entryRepr(zl, entry);
+        printf("\n");
+        ptr += entry->totalSize;
+    }
+}
+
+unsigned int ziplistLen(unsigned char *zl) {
+    return ZIPLIST_LENGTH(zl);
+}
+
+size_t ziplistBlobLen(unsigned char *zl) {
+    return ZIPLIST_BYTES(zl);
+}
+
+unsigned char *_ziplistDelete(unsigned char *zl, unsigned char *p, unsigned int deleteNumber) {
+    if (zl == NULL || p[0] == ZIP_END) {
+        return NULL;
+    }
+
+    unsigned char *endP = p;
+
+    int deleteCount = 0;
+
+    while (*endP != ZIP_END && deleteCount < deleteNumber) {
+        struct zlentry *entry = zipEntry(endP);
+        endP += entry->totalSize;
+        deleteCount += 1;
+    }
+
+
+    if (!deleteCount) {
+        return zl;
+    }
+
+    // 后面没有元素了
+    if (*endP == ZIP_END) {
+        ZIPLIST_TAIL_OFFSET(zl) = ZIPLIST_TAIL_OFFSET(zl) - (endP - zl);
+        // 后面还有元素
+    } else {
+
+        // 可能会处罚级联更新
+    }
+
+    unsigned int newSize = ZIPLIST_BYTES(zl) - (endP - zl);
+    zl = realloc(zl, newSize);
+    zl[newSize] = ZIP_END;
+    ZIPLIST_BYTES(zl) = newSize;
+    ZIPLIST_LENGTH(zl) = ZIPLIST_LENGTH(zl) - deleteCount;
+
+    // tailOffset
+
+    return zl;
+}
+
+unsigned char *ziplistDelete(unsigned char *zl, unsigned char **p) {
+
+}
+
 void testInsert() {
     unsigned char *zl = ziplistNew();
     // 17 0 0 0 10 0 0 0 1 0 [0 4 122 122 122 106] 255
@@ -626,14 +696,9 @@ void testInsert() {
 
     zl = ziplistPush(zl, "heihei", 6, 0);
 
-    printZl(zl);
-
-    // 27 0 0 0 16 0 0 0 2 0 [0 4 122 122 122 106] [6 192 209 4] [6 4 98 105 104 97] 255
-    // 级联更新后
-    // 27 0 0 0 16 0 0 0 3 0 [0 4 122 122 122 106] [6 192 209 4] [4 4 98 105 104 97] 255
     zl = ziplistInsert(zl, ziplistIndex(zl, 2), "1233", 4);
 
-    printZl(zl);
+    ziplistRepr(zl);
 }
 
 int main() {
