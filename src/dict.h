@@ -273,6 +273,7 @@ struct dictType sdsDictType = {
         sdsDup0,
         sdsDup0,
         sdsCmp0,
+        sdsFree,
         sdsFree
 };
 

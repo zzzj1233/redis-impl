@@ -763,6 +763,24 @@ unsigned char *ziplistFind(unsigned char *p, unsigned char *vstr, unsigned int v
     }
 }
 
+unsigned int ziplistCompare(unsigned char *p, unsigned char *s, unsigned int slen) {
+    if (p == NULL || p[0] == ZIP_END) {
+        return 0;
+    }
+    struct zlentry *entry = zipEntry(p);
+
+    if (zipEntryIsStr(entry)) {
+        return entry->contentLen == slen && memcmp(entry->p + entry->previousLen + entry->encodingLen, s, slen) == 0;
+    } else {
+        long long numberValue = 0;
+        unsigned char *encoding = NULL;
+        if (zipTryEncoding(s, slen, &numberValue, &encoding)) {
+            return zipLoadInt(entry->p + entry->previousLen + entry->encodingLen, *encoding) == numberValue;
+        }
+        return 0;
+    }
+}
+
 void testInsert() {
     unsigned char *zl = ziplistNew();
     zl = ziplistPush(zl, "zzzj", 4, 0);

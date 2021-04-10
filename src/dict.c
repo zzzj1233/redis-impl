@@ -12,7 +12,7 @@ void initDictHt(dictht *ht) {
 dict *dictCreate(dictType *type, void *privDataPtr) {
     dict *dic = malloc(sizeof(dict));
     dic->type = type;
-    // Èùû-1Ë°®Á§∫Ê≠£Âú®rehash
+    // ∑«-1±Ì æ’˝‘⁄rehash
     dic->rehashidx = -1;
     dic->iterators = 0;
     dic->privdata = privDataPtr;
@@ -27,9 +27,9 @@ int dictAdd(dict *d, void *key, void *val) {
 
     char ret = entry->v.val == NULL ? DICT_OK : DICT_ERR;
 
-    entry->v.val = val;
+    entry->v.val = d->type->keyDup(d->privdata, val);
 
-    // ÊàêÂäüÊñ∞Â¢û‰∫ÜÂÖÉÁ¥† & dictÊ≤°ÊúâÂú®rehash &
+    // ≥…π¶–¬‘ˆ¡À‘™Àÿ & dict√ª”–‘⁄rehash &
     if (ret && d->rehashidx == -1 && (((double) d->ht[0].used) / ((double) d->ht[0].size)) >= LOAD_FACTOR) {
         dictExpand(d, d->ht[0].size * 2);
     }
@@ -58,7 +58,7 @@ dictEntry *htFind(dict *d, struct dictht *ht, const void *key) {
 }
 
 dictEntry *dictFind(dict *d, const void *key) {
-    // Â¶ÇÊûúÊ≠£Âú®rehash,‰ªéÂÖà0ÈáåÈù¢Êâæ,ÂÜçÂà∞1ÈáåÈù¢Êâæ
+    // »Áπ˚’˝‘⁄rehash,¥”œ»0¿Ô√Ê’“,‘ŸµΩ1¿Ô√Ê’“
     if (dictIsRehashing(d)) {
         dictRehash(d, 1);
     }
@@ -123,21 +123,21 @@ dictEntry *dictAddRaw(dict *d, void *key) {
 
     while (entry->next != NULL) {
         if (d->type->keyCompare(d->privdata, entry->key, key)) {
-            // Êõ¥Êñ∞value
+            // ∏¸–¬value
             ht->used--;
             return entry;
         }
         entry = entry->next;
     }
 
-    // ÊúÄÂêé‰∏Ä‰∏™
+    // ◊Ó∫Û“ª∏ˆ
     if (d->type->keyCompare(d->privdata, entry->key, key)) {
-        // Êõ¥Êñ∞value
+        // ∏¸–¬value
         ht->used--;
         return entry;
     }
 
-    // Ê≤°ÊúâkeyÁõ∏ÂêåÁöÑÂÖÉÁ¥†,ÈááÁî®Â§¥ÊèíÊ≥ï
+    // √ª”–keyœ‡Õ¨µƒ‘™Àÿ,≤…”√Õ∑≤Â∑®
     dictEntry *head = ht->table[index];
 
     ht->table[index] = malloc(sizeof(struct dictEntry));
@@ -173,7 +173,7 @@ _Bool dictContains(dict *d, const void *key) {
         dictRehash(d, 1);
     }
 
-    // Â¶ÇÊûúÊ≠£Âú®rehash,‰ªéht[0]Ê≤°ÊúâÂåπÈÖçÂêé,ËøòÈúÄË¶Å‰ªéht[1]ËøõË°åÂåπÈÖç
+    // »Áπ˚’˝‘⁄rehash,¥”ht[0]√ª”–∆•≈‰∫Û,ªπ–Ë“™¥”ht[1]Ω¯––∆•≈‰
 
     unsigned int hash = d->type->hashFunction(key);
 
@@ -184,7 +184,8 @@ _Bool dictContains(dict *d, const void *key) {
     return _dictContains(d, &d->ht[1], hash, key);
 }
 
-int dictDelete(dict *d, const void *key) {
+
+int _dictDelete(dict *d, const void *key, int needFree) {
     if (dictIsRehashing(d)) {
         dictRehash(d, 1);
     }
@@ -204,13 +205,18 @@ int dictDelete(dict *d, const void *key) {
 
     dictEntry *previous = ht.table[index];
 
-    // headÁöÑÁâπÊÆäÂ§ÑÁêÜ
+    // headµƒÃÿ ‚¥¶¿Ì
     if (d->type->keyCompare(d->privdata, previous->key, key)) {
         d->type->keyDestructor(d->privdata, previous->key);
         ht.table[index] = previous->next;
+        if (needFree) {
+            d->type->keyDestructor(d->privdata, previous->key);
+            d->type->valDestructor(d->privdata, previous->v.val);
+        }
         free(previous);
         return DICT_OK;
     }
+
     dictEntry *current = previous->next;
 
     while (current != NULL) {
@@ -218,6 +224,10 @@ int dictDelete(dict *d, const void *key) {
         if (d->type->keyCompare(d->privdata, current->key, key)) {
             previous->next = current->next;
             d->type->keyDestructor(d->privdata, current->key);
+            if (needFree) {
+                d->type->keyDestructor(d->privdata, current->key);
+                d->type->valDestructor(d->privdata, current->v.val);
+            }
             free(current);
             return DICT_OK;
         }
@@ -229,13 +239,53 @@ int dictDelete(dict *d, const void *key) {
     return 0;
 }
 
+int dictDelete(dict *d, const void *key) {
+    return _dictDelete(d, key, 1);
+}
+
+int dictDeleteNoFree(dict *d, const void *key) {
+    return _dictDelete(d, key, 0);
+}
+
+void _dictClearEntry(dict *d, dictEntry *entry) {
+    if (entry != NULL) {
+        d->type->keyDestructor(d->privdata, entry->key);
+        d->type->valDestructor(d->privdata, entry->v.val);
+        if (entry->next != NULL) {
+            _dictClearEntry(d, entry->next);
+        }
+        free(entry);
+    }
+}
+
+void _dictClear(dict *d) {
+    if (d == NULL) {
+        return;
+    }
+    for (int i = 0; i <= 1; ++i) {
+        dictht ht = d->ht[i];
+        if (ht.used > 0) {
+            for (int j = 0; j < ht.size; ++j) {
+                dictEntry *entry = ht.table[j];
+                _dictClearEntry(d, entry);
+            }
+            free(ht.table);
+            initDictHt(&ht);
+        }
+    }
+}
+
+void dictRelease(dict *d) {
+    _dictClear(d);
+}
+
 int dictRehash(dict *d, int n) {
-    // Ê≤°Âú®rehash
+    // √ª‘⁄rehash
     if (d->rehashidx == -1) {
         return DICT_ERR;
     }
 
-    // rehashÁªìÊùü‰∫Ü
+    // rehashΩ· ¯¡À
     if (d->ht[0].used == 0) {
         free(d->ht[0].table);
         d->ht[0] = d->ht[1];
@@ -247,7 +297,7 @@ int dictRehash(dict *d, int n) {
 
     while (n--) {
 
-        // Ë∑≥ËøáÁ©∫ÁöÑindex
+        // Ã¯π˝ø’µƒindex
         while (!d->ht[0].table[d->rehashidx]) {
             d->rehashidx++;
         }
@@ -284,20 +334,176 @@ int dictExpand(dict *d, unsigned long size) {
     return DICT_OK;
 }
 
+int dictReplace(dict *d, void *key, void *val) {
+    dictEntry *entry = dictFind(d, key);
+
+    if (entry == NULL) {
+        dictAdd(d, key, val);
+        return 1;
+    }
+
+    d->type->valDestructor(d->privdata, entry->v.val);
+
+    entry->v.val = d->type->valDup(d->privdata, val);
+
+    return 0;
+}
+
+// ¥Ê‘⁄‘Ú∑µªÿ,≤ª¥Ê‘⁄‘Ú–¬‘ˆ“ª∏ˆ√ª”–valueµƒentry
+dictEntry *dictReplaceRaw(dict *d, void *key) {
+    dictEntry *entry = dictFind(d, key);
+
+    return entry != NULL ? entry : dictAddRaw(d, key);
+}
+
+void dictEntryPureRepr(dictEntry *entry) {
+    if (entry == NULL) {
+        return;
+    } else {
+        printf("k %s , v = %s , ", entry->key, entry->v.val);
+    }
+}
+
+void dictEntryRepr(dictEntry *entry) {
+    if (entry == NULL) {
+        return;
+    } else {
+        printf("k %s , v = %s , ", entry->key, entry->v.val);
+        if (entry->next != NULL) {
+            dictEntryRepr(entry->next);
+        }
+    }
+}
+
+void dictRepr(dict *d) {
+    printf("dict : rehashIndex = %d \n", d->rehashidx);
+    printf("ht0 : size = %lu, used = %lu : \n\t", d->ht[0].size, d->ht[0].used);
+    for (int i = 0; i < d->ht[0].size; ++i) {
+        printf(" %d : ", i);
+        dictEntryRepr(d->ht[0].table[i]);
+    }
+    printf("\n================================================================\n");
+    printf("ht1 : size = %lu, used = %lu \n\t", d->ht[1].size, d->ht[1].used);
+    for (int i = 0; i < d->ht[1].size; ++i) {
+        printf(" %d : ", i);
+        dictEntryRepr(d->ht[1].table[i]);
+    }
+    printf("\n");
+}
+
+dict *initDict() {
+    dict *d = dictCreate(&sdsDictType, NULL);
+
+    dictAdd(d, sdsnew("name"), sdsnew("zzzj"));
+    dictAdd(d, sdsnew("age"), sdsnew("23"));
+    dictAdd(d, sdsnew("gender"), sdsnew("ƒ–"));
+    dictAdd(d, sdsnew("hobby"), sdsnew("‘›Œﬁ"));
+    return d;
+}
+
+dictIterator *dictGetIterator(dict *d) {
+    dictIterator *iter = malloc(sizeof(*iter));
+    iter->d = d;
+    iter->table = 0;
+    iter->index = -1;
+    iter->entry = NULL;
+    iter->nextEntry = NULL;
+    iter->fingerprint = 0;
+    iter->safe = 0;
+    return iter;
+}
+
+dictIterator *dictGetSafeIterator(dict *d) {
+    dictIterator *iter = dictGetIterator(d);
+    iter->safe = 1;
+    return iter;
+}
+
+dictEntry *dictNext(dictIterator *iter) {
+
+    while (1) {
+        if (iter->entry == NULL) {
+            // µ⁄“ª¥Œ÷¥––
+            if (iter->index == -1 && iter->table == 0) {
+                // ∞≤»´µ¸¥˙∆˜º«¬º≥÷”– ˝¡ø
+                if (iter->safe) {
+                    iter->d->iterators++;
+                } else {
+
+                }
+                // ∑«∞≤»´µ¸¥˙∆˜º«¬º÷∏Œ∆
+            }
+
+            iter->index++;
+
+            // µ¸¥˙ÕÍ±œ
+            if (iter->index >= iter->d->ht[iter->table].size) {
+                // µ⁄“ª∏ˆtableµ¸¥˙ÕÍ¡À,≤¢«“’˝‘⁄rehash,ƒ«√¥»•µ⁄∂˛∏ˆtableµ¸¥˙
+                if (dictIsRehashing(iter->d) && iter->table == 0) {
+                    iter->table = 1;
+                    iter->index = -1;
+                    // µ¸¥˙ÕÍ¡À
+                } else {
+                    return NULL;
+                }
+            } else {
+                // ªÒ»°table[index]¥¶µƒentry,ø…ƒ‹Œ™ø’,»ª∫Û‘Ÿ◊ﬂ“ª¥Œ—≠ª∑
+                iter->entry = iter->d->ht[iter->table].table[iter->index];
+            }
+        } else {
+            // ø…ƒ‹Œ™ø’,»ª∫Û‘Ÿ◊ﬂ“ª¥Œ—≠ª∑
+            iter->entry = iter->nextEntry;
+        }
+
+        if (iter->entry != NULL) {
+            iter->nextEntry = iter->entry->next;
+            return iter->entry;
+        }
+    }
+}
+
+void dictReleaseIterator(dictIterator *iter) {
+    if (iter->index != -1 || iter->table != 0) {
+        if (iter->safe) {
+            iter->d->iterators--;
+        } else {
+            // ºÏ≤È÷∏Œ∆ «∑Ò“ª÷¬
+        }
+    }
+    // Œﬁ–Ë Õ∑≈iter->d∫Õiter-entry & iter->nextEntry
+    // À˘“‘÷±Ω” «∑Òiterº¥ø…
+    free(iter);
+}
+
+dictEntry *dictGetRandomKey(dict *d) {
+
+}
+
+void testReplace() {
+    dict *d = initDict();
+    dictReplace(d, sdsnew("name"), sdsnew("dl"));
+    dictRepr(d);
+}
+
+void testDelete() {
+    dict *d = initDict();
+    dictDelete(d, sdsnew("name"));
+    dictRepr(d);
+}
+
+void testIter() {
+    dict *d = initDict();
+    dictIterator *iter = dictGetIterator(d);
+    dictEntry *entry = NULL;
+    dictRepr(d);
+    while ((entry = dictNext(iter)) != NULL) {
+        dictEntryPureRepr(entry);
+    }
+    dictReleaseIterator(iter);
+}
+
 int main() {
-
-    dict *dic = dictCreate(&sdsDictType, NULL);
-
-    dictAdd(dic, sdsnew("name"), sdsnew("zzzj"));
-    dictAdd(dic, sdsnew("age"), sdsnew("22"));
-    dictAdd(dic, sdsnew("gender"), sdsnew("Áî∑"));
-
-    printf("name = %d \n", dictContains(dic, sdsnew("name")));
-    printf("age = %d \n", dictContains(dic, sdsnew("age")));
-    printf("gender = %d \n", dictContains(dic, sdsnew("gender")));
-    printf("haha = %d \n", dictContains(dic, sdsnew("haha")));
-
-    dictDelete(dic, sdsnew("age"));
-
-    printf("age = %d \n", dictContains(dic, sdsnew("age")));
+    // testReplace();
+    // testDelete();
+    testIter();
 }
