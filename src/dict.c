@@ -277,6 +277,8 @@ void _dictClear(dict *d) {
 
 void dictRelease(dict *d) {
     _dictClear(d);
+    // type 和 privateData不需要free
+    free(d);
 }
 
 int dictRehash(dict *d, int n) {
@@ -473,6 +475,15 @@ void dictReleaseIterator(dictIterator *iter) {
     // 无需释放iter->d和iter-entry & iter->nextEntry
     // 所以直接是否iter即可
     free(iter);
+}
+
+void dictEmpty(dict *d, void(callback)(void *)) {
+    _dictClear(d);
+    d->rehashidx = -1;
+    d->iterators = 0;
+    if (callback != NULL) {
+        callback(d->privdata);
+    }
 }
 
 dictEntry *dictGetRandomKey(dict *d) {
