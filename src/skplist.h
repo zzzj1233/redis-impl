@@ -1,4 +1,5 @@
 #define ZSKIPLIST_MAXLEVEL 32
+#define ZSKIPLIST_P 0.25
 
 typedef struct zskiplistNode {
     // 成员对象
@@ -38,6 +39,10 @@ typedef struct zskiplist {
 
 
 zskiplist *zslCreate(void);
+
+zskiplistNode *zslCreateNode(int level, void *obj, double score);
+
+zskiplistNode *zslInsert(zskiplist *zsl, double score, void *obj);
 
 void zslFree(zskiplist *zsl);
 
